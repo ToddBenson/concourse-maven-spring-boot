@@ -10,8 +10,15 @@ inputs:
   - name: source-code
 
 run:
-  path: "source-code/mvnw"
-  args: ["-f", "source-code/pom.xml", "package", "sonar:sonar"]
+  path: source-code
+  args:
+  - -exc
+  - |
+  mvnw -f source-code/pom.xml package sonar:sonar
+  cp ./target/*.war ../release
+
+outputs:
+  - name: release
 
 params:
   MAVEN_BASEDIR: source-code
