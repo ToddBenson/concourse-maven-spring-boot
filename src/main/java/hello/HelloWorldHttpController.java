@@ -13,6 +13,8 @@ public class HelloWorldHttpController {
     @RequestMapping("/greeting")
     public String greeting(@RequestParam(value="name", required=false, defaultValue="World") String name, Model model) {
         model.addAttribute("name", name);
+        String token = new Application().generateSecretToken();
+        System.out.print(token);
         return "greeting";
     }
 
