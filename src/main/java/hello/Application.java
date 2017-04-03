@@ -13,6 +13,8 @@ public class Application {
 
 
 	String generateSecretToken() {
+		Random r = new Random();
+		return Long.toHexString(r.nextLong());
 	}
 
 }
