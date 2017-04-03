@@ -17,5 +17,4 @@ public class HelloWorldHttpController {
         System.out.print(token);
         return "greeting";
     }
-
 }
