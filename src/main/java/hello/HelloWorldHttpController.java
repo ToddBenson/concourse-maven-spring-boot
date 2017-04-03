@@ -14,6 +14,6 @@ public class HelloWorldHttpController {
 //        String token = new Application().generateSecretToken();
 //        System.out.print(token);
 //        return "greeting" + token;
-        retrun "greeting";
+        return "greeting";
     }
 }
