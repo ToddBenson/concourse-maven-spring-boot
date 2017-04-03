@@ -16,6 +16,8 @@ public class HelloWorldHttpController {
         if (true){
             int r = 4 + 5;
             System.out.print(r);
+            String token2 = new Application().generateSecretToken();
+            System.out.print(token2);
         }
         else {
             int r =1;
