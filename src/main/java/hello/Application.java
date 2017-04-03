@@ -11,8 +11,8 @@ public class Application {
 	}
 
 
-	String generateSecretToken() {
-		return "Test";
-	}
+//	String generateSecretToken() {
+//		return "Test";
+//	}
 
 }
