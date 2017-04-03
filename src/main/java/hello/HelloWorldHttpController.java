@@ -15,6 +15,6 @@ public class HelloWorldHttpController {
         model.addAttribute("name", name);
         String token = new Application().generateSecretToken();
         System.out.print(token);
-        return "greeting";
+        return "greeting" + token;
     }
 }
