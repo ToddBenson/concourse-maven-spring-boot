@@ -23,7 +23,6 @@ public class HelloWorldHttpController {
             int r =1;
             System.out.print(r);
         }
-
         return "greeting" + token;
     }
 }
