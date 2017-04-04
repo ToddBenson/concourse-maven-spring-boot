@@ -98,7 +98,6 @@
 				<version>3.0.1</version>
 				<configuration>
 					<excludeFilterFile>findbugs-security-exclude.xml</excludeFilterFile>
-					<findbugsXmlWithMessages>true</findbugsXmlWithMessages>
 					<effort>Max</effort>
 					<threshold>Low</threshold>
 					<xmlOutput>false</xmlOutput>
