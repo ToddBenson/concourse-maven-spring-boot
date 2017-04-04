@@ -5,8 +5,9 @@ image_resource:
   type: docker-image
   source: {repository: mercuriete/sonar-scanner}
 
-  input:
+  inputs:
   - name: SAST-pr
 
   run:
-    path: ls -l
+    path: SAST-pr
+    args: ls -l
