@@ -97,16 +97,21 @@
 				<artifactId>findbugs-maven-plugin</artifactId>
 				<version>3.0.1</version>
 				<configuration>
-					<!--
-                        Enables analysis which takes more memory but finds more bugs.
-                        If you run out of memory, changes the value of the effort element
-                        to 'low'.
-                    -->
+					<excludeFilterFile>findbugs-security-exclude.xml</excludeFilterFile>
+					<findbugsXmlWithMessages>true</findbugsXmlWithMessages>
 					<effort>Max</effort>
-					<!-- Reports all bugs (other values are medium and max) -->
 					<threshold>Low</threshold>
-					<!-- Produces XML report -->
-					<xmlOutput>true</xmlOutput>
+					<xmlOutput>false</xmlOutput>
+					<outputDirectory>.</outputDirectory>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.owasp</groupId>
+				<artifactId>dependency-check-maven</artifactId>
+				<version>1.4.5</version>
+				<configuration>
+					<format>ALL</format>
+					<outputDirectory>.</outputDirectory>
 				</configuration>
 			</plugin>
 		</plugins>

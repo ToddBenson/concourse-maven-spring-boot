@@ -17,6 +17,11 @@ public class Application {
 		return Long.toHexString(r.nextLong());
 	}
 
+    String generateCSRFToken() {
+        Random t = new Random();
+        return Long.toHexString(t.nextLong());
+    }
+
 
 
 }
