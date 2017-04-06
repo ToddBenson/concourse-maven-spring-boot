@@ -13,6 +13,14 @@
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>1.5.1.RELEASE</version>
 	</parent>
+	
+	<properties>
+          <dependency.check.report.dir>${project.build.directory}</dependency.check.report.dir>
+          <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+          <sonar.host.url>http://10.37.128.36/:9000/</sonar.host.url>
+          <sonar.sources>src/main/java/hello</sonar.sources>
+          <sonar.dependencyCheck.reportPath>${dependency.check.report.dir}/dependency-check-report.xml</sonar.dependencyCheck.reportPath>
+        </properties>
 
 	<dependencies>
 		<dependency>
