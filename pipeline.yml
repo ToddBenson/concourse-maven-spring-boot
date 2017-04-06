@@ -1,0 +1,68 @@
+resource_types:
+- name: pull-request
+  type: docker-image
+  source:
+    repository: jtarchie/pr
+
+resources:
+- name: SAST-pr
+  type: pull-request
+  source:
+    repo: {{repo}}
+    access_token: {{repo-token}}
+
+- name: git-repo
+  type: git
+  source:
+    uri: https://github.com/{{repo}}
+    username: {{git-username}}
+    password: {{git-password}}
+
+jobs:
+- name: predeploy-SAST-test
+  plan:
+  - get: git-repo
+    trigger: true
+  - task: unit
+    config:
+      image_resource:
+        type: docker-image
+        source:
+          repository: {{docker-image}}
+      inputs:
+        - name: git-repo
+      platform: linux
+      run:
+        path: sh
+        args: ['-c', 'cd git-repo;retire --path . --outputformat text --outputpath retire.txt;eslint -c /opt/configs/static/.eslintrc --debug . -o ./eslint.txt;./mvnw clean install findbugs:findbugs;cat *.txt;sonar-scanner -Dsonar.host.url=http://10.37.128.36:9000 -Dsonar.projectKey=my:project -Dsonar.projectName=concourse-maven-spring-boot -Dsonar.projectVersion=1.0 -Dsonar.sources=./src/main/java/hello -Dsonar.java.binaries=./target/classes -Dsonar.github.repository=ToddBenson/concourse-maven-spring-boot -Dsonar.github.oauth=6a593e9cfef6d81e66f8da0577510ca69c8694f2 -Dsonar.login=607632a7d4379a3b1369f5a123bae8f87ddc83b1']
+
+- name: pr-SAST-test
+  plan:
+  - get: SAST-pr
+    trigger: true
+  - put: SAST-pr
+    params:
+      path: SAST-pr
+      status: pending
+  - task: unit
+    config:
+      image_resource:
+        type: docker-image
+        source:
+          repository: {{docker-image}}
+      inputs:
+        - name: SAST-pr
+      platform: linux
+      run:
+        path: sh
+        args: ['-c', 'cd SAST-pr;retire --path . --outputformat text --outputpath retire.txt;eslint -c /opt/configs/static/.eslintrc --debug . -o ./eslint.txt;./mvnw clean install findbugs:findbugs;cat *.txt;sonar-scanner -Dsonar.host.url=http://10.37.128.36:9000 -Dsonar.projectKey=my:project -Dsonar.projectName=concourse-maven-spring-boot -Dsonar.projectVersion=1.0 -Dsonar.sources=./src/main/java/hello -Dsonar.java.binaries=./target/classes -Dsonar.analysis.mode=preview -Dsonar.github.pullRequest=$(git config --get pullrequest.id) -Dsonar.github.repository=ToddBenson/concourse-maven-spring-boot -Dsonar.github.oauth=6a593e9cfef6d81e66f8da0577510ca69c8694f2 -Dsonar.login=607632a7d4379a3b1369f5a123bae8f87ddc83b1']
+    on_success:
+      put: SAST-pr
+      params:
+        path: SAST-pr
+        status: success
+    on_failure:
+      put: SAST-pr
+      params:
+        path: SAST-pr
+        status: failure
