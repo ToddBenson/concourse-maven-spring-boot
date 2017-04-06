@@ -2,7 +2,7 @@
 platform: linux
 
 inputs:
-    - { name: SAST-pr}
+    - { name: SAST-pr }
 run:
     dir:
     path: pr-sast.sh
