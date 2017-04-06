@@ -4,5 +4,5 @@ platform: linux
 inputs:
     - { name: git-repo}
 run:
-    dir:
+    dir: git-repo
     path: predeploy-sast.sh
