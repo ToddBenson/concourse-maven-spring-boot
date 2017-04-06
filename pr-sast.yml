@@ -5,4 +5,4 @@ inputs:
     - { name: git-repo }
 run:
     dir: git-repo
-    path: pr-sast.sh
+    path: ./pr-sast.sh
