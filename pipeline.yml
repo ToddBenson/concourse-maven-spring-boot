@@ -43,19 +43,6 @@ jobs:
       SONAR_PROJECT_NAME: {{sonar-project-name}}
       SONAR_PROJECT_KEY: {{sonar-project-key}}
       SONAR_URL: {{sonar-url}}
-#  - task: unit
-#    config:
-#      image_resource:
-#        type: docker-image$REPO
-#        source:
-#          repository: tgbenson/jssast
-#      inputs:
-#        - name: git-repo
-#      platform: linux
-#      run:
-#        path: sh
-#        args: ['-c', 'cd git-repo;retire --path . --outputformat text --outputpath retire.txt;eslint -c /opt/configs/static/.eslintrc --debug . -o ./eslint.txt;./mvnw clean install findbugs:findbugs;cat *.txt;sonar-scanner -Dsonar.host.url=http://10.37.128.36:9000 -Dsonar.projectKey=my:project -Dsonar.projectName=concourse-maven-spring-boot -Dsonar.projectVersion=1.0 -Dsonar.sources=./src/main/java/hello -Dsonar.java.binaries=./target/classes -Dsonar.github.repository=ToddBenson/concourse-maven-spring-boot -Dsonar.github.oauth=ebf39265ab4de4329a9fbbeab50fe2882e0e2088 -Dsonar.login=607632a7d4379a3b1369f5a123bae8f87ddc83b1']
-
 - name: pr-SAST-test
   plan:
   - get: SAST-pr
@@ -67,19 +54,17 @@ jobs:
       path: SAST-pr
       status: pending
   - task: unit
-#    config:
-#      image_resource:
-#        type: docker-image
-#        source:
-#          repository: tgbenson/jssast
-#      inputs:
-#      - name: SAST-pr
-#      platform: linux
-#      run:
-#        path: sh
-#        args: ['-c', 'cd SAST-pr;retire --path . --outputformat text --outputpath retire.txt;eslint -c /opt/configs/static/.eslintrc --debug . -o ./eslint.txt;./mvnw clean install findbugs:findbugs;cat *.txt;sonar-scanner -Dsonar.host.url=http://10.37.128.36:9000 -Dsonar.projectKey=my:project -Dsonar.projectName=concourse-maven-spring-boot -Dsonar.projectVersion=1.0 -Dsonar.sources=./src/main/java/hello -Dsonar.java.binaries=./target/classes -Dsonar.analysis.mode=preview -Dsonar.github.pullRequest=$(git config --get pullrequest.id) -Dsonar.github.repository=ToddBenson/concourse-maven-spring-boot -Dsonar.github.oauth=ebf39265ab4de4329a9fbbeab50fe2882e0e2088 -Dsonar.login=607632a7d4379a3b1369f5a123bae8f87ddc83b1']
-    file: git-repo/pr-sast.yml
-    image: sast-image
+    config:
+      image_resource:
+        type: docker-image
+        source:
+          repository: tgbenson/jssast
+      inputs:
+      - name: SAST-pr
+      platform: linux
+      run:
+        path: sh
+        args: ['-c', 'cd SAST-pr;retire --path . --outputformat text --outputpath retire.txt;eslint -c /opt/configs/static/.eslintrc --debug . -o ./eslint.txt;./mvnw clean install findbugs:findbugs;cat *.txt;sonar-scanner -Dsonar.host.url=$SONAR_URL -Dsonar.projectKey=$SONAR_PROJECT_KEY -Dsonar.projectName=$SONAR_PROJECT_NAME -Dsonar.projectVersion=$SONAR_PROJECT_VERSION -Dsonar.sources=$SONAR_SOURCES -Dsonar.java.binaries=$SONAR_JAVA_BINARIES -Dsonar.analysis.mode=preview -Dsonar.github.pullRequest=$(git config --get pullrequest.id) -Dsonar.github.repository=$REPO -Dsonar.github.oauth=$GIT_REPO_TOKEN -Dsonar.login=$SONAR_TOKEN']
     params:
       GIT_REPO_TOKEN: {{git-repo-token}}
       SONAR_TOKEN: {{sonar-token}}
