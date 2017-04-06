@@ -20,7 +20,8 @@
           <sonar.host.url>http://10.37.128.36/:9000/</sonar.host.url>
           <sonar.sources>src/main/java/hello</sonar.sources>
           <sonar.dependencyCheck.reportPath>${dependency.check.report.dir}/dependency-check-report.xml</sonar.dependencyCheck.reportPath>
-        </properties>
+	  <java.version>1.8</java.version>
+	</properties>
 
 	<dependencies>
 		<dependency>
@@ -54,10 +55,6 @@
 			<version>RELEASE</version>
 		</dependency>
 	</dependencies>
-
-	<properties>
-		<java.version>1.8</java.version>
-	</properties>
 
 	<build>
         <plugins>
