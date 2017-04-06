@@ -1,5 +1,4 @@
 #!/bin/bash
-cd git-repo
 retire --path . --outputformat text --outputpath retire.txt
 eslint -c /opt/configs/static/.eslintrc --debug . -o ./eslint.txt
 ./mvnw clean install findbugs:findbugs
