@@ -2,7 +2,7 @@
 platform: linux
 
 inputs:
-    - { name: SAST-pr }
+    - { name: git-repo }
 run:
-    dir: SAST-pr
+    dir: git-repo
     path: pr-sast.sh
