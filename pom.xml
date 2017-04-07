@@ -62,40 +62,45 @@
 		      <groupId>org.springframework.boot</groupId>
 			  <artifactId>spring-boot-maven-plugin</artifactId>
 		  </plugin>
-			<plugin>
-				<groupId>org.owasp</groupId>
-				<artifactId>dependency-check-maven</artifactId>
-				<version>1.4.5</version>
-				<configuration>
-					<format>XML</format>
-				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>check</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>findbugs-maven-plugin</artifactId>
-				<version>3.0.1</version>
-				<configuration>
-					<effort>Max</effort>
-					<threshold>Low</threshold>
-					<failOnError>true</failOnError>
-					<includeFilterFile>findbugs-security-include.xml</includeFilterFile>
-					<excludeFilterFile>findbugs-security-exclude.xml</excludeFilterFile>
-					<plugins>
-						<plugin>
-							<groupId>com.h3xstream.findsecbugs</groupId>
-							<artifactId>findsecbugs-plugin</artifactId>
-							<version>LATEST</version> <!-- Auto-update to the latest stable -->
-						</plugin>
-					</plugins>
-				</configuration>
-			</plugin>
+		  <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>sonar-maven-plugin</artifactId>
+                    <version>2.6</version>
+                  </plugin>
+		  <plugin>
+			<groupId>org.owasp</groupId>
+			<artifactId>dependency-check-maven</artifactId>
+			<version>1.4.5</version>
+			<configuration>
+				<format>XML</format>
+			</configuration>
+			<executions>
+				<execution>
+					<goals>
+						<goal>check</goal>
+					</goals>
+				</execution>
+			</executions>
+		  </plugin>
+		  <plugin>
+			<groupId>org.codehaus.mojo</groupId>
+			<artifactId>findbugs-maven-plugin</artifactId>
+			<version>3.0.1</version>
+			<configuration>
+				<effort>Max</effort>
+				<threshold>Low</threshold>
+				<failOnError>true</failOnError>
+				<includeFilterFile>findbugs-security-include.xml</includeFilterFile>
+				<excludeFilterFile>findbugs-security-exclude.xml</excludeFilterFile>
+				<plugins>
+					<plugin>
+						<groupId>com.h3xstream.findsecbugs</groupId>
+						<artifactId>findsecbugs-plugin</artifactId>
+						<version>LATEST</version> <!-- Auto-update to the latest stable -->
+					</plugin>
+				</plugins>
+			</configuration>
+		  </plugin>
 	   </plugins>
 	</build>
 	<reporting>
