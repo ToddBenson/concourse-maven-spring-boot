@@ -14,8 +14,9 @@ run:
   args:
   - -exc
   - |
-  ./mvnw -f git-repo/pom.xml clean install
-  cp ./target/*.war ../release
+  ls
+#  ./mvnw -f git-repo/pom.xml clean install
+#  cp ./target/*.war ../release
 
 outputs:
   - name: release
