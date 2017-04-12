@@ -1,4 +1,4 @@
-#!/usr/bin/env bash#!/usr/bin/env bash
+#! /bin/bash
 export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 clear
 OPTIND=1         # Reset in case getopts has been used previously in the shell.

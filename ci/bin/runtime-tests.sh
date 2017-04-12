@@ -1,4 +1,4 @@
-#!/usr/bin/env bash#! /bin/bash
+#! /bin/bash
 export SSLYZE_PATH=/usr/bin/sslyze
 cd ../git-securitytests-repo/src/
 /opt/gauntlt/bin/gauntlt -f progress
