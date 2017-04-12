@@ -1,5 +1,5 @@
 #!/bin/bash
 pwd
 ls -l
-./mvnw -f git-repo/pom.xml clean install
+./mvnw -f clean install
 cp ./target/*.war ../release
