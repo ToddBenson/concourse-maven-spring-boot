@@ -98,22 +98,21 @@
 				<version>3.0.1</version>
 				<configuration>
 					<excludeFilterFile>findbugs-security-exclude.xml</excludeFilterFile>
-					<findbugsXmlWithMessages>true</findbugsXmlWithMessages>
 					<effort>Max</effort>
 					<threshold>Low</threshold>
 					<xmlOutput>false</xmlOutput>
 					<outputDirectory>.</outputDirectory>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>org.owasp</groupId>
-				<artifactId>dependency-check-maven</artifactId>
-				<version>1.4.5</version>
-				<configuration>
-					<format>ALL</format>
-					<outputDirectory>.</outputDirectory>
-				</configuration>
-			</plugin>
+			<!--<plugin>-->
+				<!--<groupId>org.owasp</groupId>-->
+				<!--<artifactId>dependency-check-maven</artifactId>-->
+				<!--<version>1.4.5</version>-->
+				<!--<configuration>-->
+					<!--<format>ALL</format>-->
+					<!--<outputDirectory>.</outputDirectory>-->
+				<!--</configuration>-->
+			<!--</plugin>-->
 		</plugins>
 	</reporting>
 </project>

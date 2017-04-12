@@ -7,18 +7,18 @@ image_resource:
     tag: latest
 
 inputs:
-  - name: source-code
+  - name: git-repo
 
 run:
-  path: source-code
+  path: git-repo
   args:
   - -exc
   - |
-  mvnw -f source-code/pom.xml package sonar:sonar
+  mvnw -f git-repo/pom.xml package sonar:sonar
   cp ./target/*.war ../release
 
 outputs:
   - name: release
 
 params:
-  MAVEN_BASEDIR: source-code
+  MAVEN_BASEDIR: git-repo
