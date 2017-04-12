@@ -13,7 +13,7 @@ cd ../release
 
 
 git config --global user.email "todd.benson@csaa.com"
-git config --global user.name "Concourse"
+git config --global user.name "ToddBenson"
 
 git add .
 git commit -m "Bumped date"
