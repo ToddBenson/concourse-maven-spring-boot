@@ -59,6 +59,12 @@ resources:
 #  source:
 #    interval: 24h
 
+- name: deploy-file
+  type: git
+  source:
+    branch: master
+    uri: https://gist.github.com/98f24ab71183713926aa350971f8bcc9.git
+
 jobs:
 - name: package-build
   plan:
@@ -70,8 +76,8 @@ jobs:
     - name: git-repo
     image: security-image
     file: git-repo/ci/tasks/package.yml
-#  - put: deploy-s3
-#    params:
+  - put: deploy-file
+    params: { repository: deploy-file }
 #      file: release/*.war
 
 - name: predeploy-SAST-test
@@ -99,10 +105,13 @@ jobs:
     - get: git-repo
       passed: [predeploy-SAST-test]
       trigger: true
+    - get: deploy-file
+      passed: [predeply-SAST-test]
   - put: deploy-cf-dev
     params:
       manifest: git-repo/ci/tasks/dev-manifest.yml
-      path: release/*.war
+
+#      path: release/*.war
 
 - name: security-acceptence-test
   plan:
