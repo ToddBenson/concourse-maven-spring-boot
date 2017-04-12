@@ -2,5 +2,5 @@
 pwd
 env
 /bin/ls
-mvnw clean install
+./mvnw clean install
 /bin/cp ./target/*.war ../release
