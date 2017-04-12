@@ -1,0 +1,11 @@
+---
+platform: linux
+inputs:
+  - { name: git-securitytests-repo }
+run:
+  dir: git-securitytests-repo
+  path: bash
+  args:
+  - -exc
+  - |
+    ci/bin/runtime-checks.sh

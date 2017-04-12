@@ -1,0 +1,6 @@
+---
+platform: linux
+inputs:
+  - { name: git-securitytests-repo }
+run:
+  path: bin/security-all-test.sh

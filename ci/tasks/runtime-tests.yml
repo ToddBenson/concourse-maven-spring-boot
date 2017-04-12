@@ -1,0 +1,7 @@
+---
+platform: linux
+inputs:
+  - { name: git-securitytests-repo }
+run:
+  dir: git-securitytests-repo
+  path: ci/bin/runtime-tests.sh

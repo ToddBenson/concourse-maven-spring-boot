@@ -1,0 +1,225 @@
+resource_types:
+- name: pull-request
+  type: docker-image
+  source:
+    repository: jtarchie/pr
+
+resources:
+- name: deploy-cf-dev
+  type: cf
+  source:
+    api: api.run.pivotal.io
+    username: todd.benson@csaa.com
+    password: {{cf-da-password}}
+    organization: todd.benson
+    space: development
+    skip_cert_check: tru
+
+- name: deploy-cf-test
+  type: cf
+  source:
+    api: api.run.pivotal.io
+    username: todd.benson@csaa.com
+    password: {{cf-da-password}}
+    organization: todd.benson
+    space: test
+    skip_cert_check: true
+
+- name: SAST-pr
+  type: pull-request
+  source:
+    repo: {{repo}}
+    access_token: {{git-repo-token}}
+
+- name: git-repo
+  type: git
+  source:
+    uri: {{git-repo}}
+    username: {{git-username}}
+    password: {{git-password}}
+
+- name: git-runtimechecks-repo
+  type: git
+  source:
+    uri: {{git-runtime-checks}}
+
+- name: git-securitytests-repo
+  type: git
+  source:
+    uri: {{git-security-tests}}
+
+- name: security-image
+  type: docker-image
+  source:
+    repository: csaa/security-gauntlt
+    tag: latest
+
+- name: runtime-checks-timer
+  type: time
+  source:
+    interval: 60m
+
+#- name: full-dynamic-scan-timer
+#  type: time
+#  source:
+#    interval: 24h
+
+jobs:
+- name: package-build
+  plan:
+  - get: git-repo
+    trigger: true
+  - get: security-image
+  - task: run-deploy
+    inputs:
+    - name: git-repo
+    file: git-repo/ci/tasks/package.yml
+#  - put: deploy-s3
+#    params:
+#      file: release/*.war
+
+- name: predeploy-SAST-test
+  plan:
+  - get: git-repo
+    trigger: true
+    passed: [package-build]
+  - get: security-image
+  - task: unit
+    file: git-repo/ci/tasks/predeploy-sast.yml
+    image: security-image
+    params:
+      GIT_REPO_TOKEN: {{git-repo-token}}
+      SONAR_TOKEN: {{sonar-token}}
+      SONAR_JAVA_BINARIES: {{sonar-java-binaries}}
+      SONAR_SOURCES: {{sonar-sources}}
+      SONAR_PROJECT_VERSION: {{sonar-project-version}}
+      SONAR_PROJECT_NAME: {{sonar-project-name}}
+      SONAR_PROJECT_KEY: {{sonar-project-key}}
+      SONAR_URL: {{sonar-url}}
+
+- name: package-deploy-dev
+  plan:
+  - aggregate:
+    - get: git-repo
+      passed: [predeploy-SAST-test]
+      trigger: true
+    - get: security-image
+  - put: deploy-cf-dev
+    params:
+      manifest: git-repo/ci/tasks/dev-manifest.yml
+      path: release/*.war
+
+- name: security-acceptence-test
+  plan:
+  - aggregate:
+    - get: git-securitytests-repo
+    - get: security-image
+    - get: git-repo
+      passed: [package-deploy-dev]
+      trigger: true
+  - task: run-security-tests
+    inputs:
+    - name: git-security-repo
+    image: security-image
+    file: git-securitytests-repo/ci/tasks/acceptance-test.yml
+    params:
+      HOSTNAME: {{dev-hostname}}
+
+- name: security-all-test
+  plan:
+  - aggregate:
+    - get: git-securitytests-repo
+    - get: security-image
+    - get: git-repo
+      passed: [security-acceptence-test]
+      trigger: true
+  - task: run-security-tests
+    inputs:
+    - name: git-securitytests-repo
+    image: security-image
+    file: git-securitytests-repo/ci/tasks/all-test.yml
+    params:
+      HOSTNAME: {{dev-hostname}}
+
+- name: package-deploy-test
+  plan:
+  - get: git-repo
+    passed: [security-acceptence-test]
+    trigger: true
+  - get: security-image
+  - put: deploy-cf-test
+    params:
+      manifest: git-repo/ci/tasks/test-manifest.yml
+      path: release/*.war
+
+- name: pr-SAST-test
+  plan:
+  - get: SAST-pr
+    trigger: true
+#  - get: git-repo
+#  - get: sast-image
+  - put: SAST-pr
+    params:
+      path: SAST-pr
+      status: pending
+  - task: unit
+    config:
+      image_resource:
+        type: docker-image
+        source:
+          repository: {{docker-image}}
+      inputs:
+      - name: SAST-pr
+      platform: linux
+      run:
+        path: sh
+        args: ['-c', 'cd SAST-pr;retire --path . --outputformat text --outputpath retire.txt;eslint -c /opt/configs/static/.eslintrc --debug . -o ./eslint.txt;./mvnw clean install findbugs:findbugs;cat *.txt;sonar-scanner -Dsonar.host.url=$SONAR_URL -Dsonar.projectKey=$SONAR_PROJECT_KEY -Dsonar.projectName=$SONAR_PROJECT_NAME -Dsonar.projectVersion=$SONAR_PROJECT_VERSION -Dsonar.sources=$SONAR_SOURCES -Dsonar.java.binaries=$SONAR_JAVA_BINARIES -Dsonar.analysis.mode=preview -Dsonar.github.pullRequest=$(git config --get pullrequest.id) -Dsonar.github.repository=$REPO -Dsonar.github.oauth=$GIT_REPO_TOKEN -Dsonar.login=$SONAR_TOKEN']
+    params:
+      GIT_REPO_TOKEN: {{git-repo-token}}
+      SONAR_TOKEN: {{sonar-token}}
+      SONAR_JAVA_BINARIES: {{sonar-java-binaries}}
+      SONAR_SOURCES: {{sonar-sources}}
+      SONAR_PROJECT_VERSION: {{sonar-project-version}}
+      SONAR_PROJECT_NAME: {{sonar-project-name}}
+      SONAR_PROJECT_KEY: {{sonar-project-key}}
+      SONAR_URL: {{sonar-url}}
+      REPO: {{repo}}
+    on_success:
+      put: SAST-pr
+      params:
+        path: SAST-pr
+        status: success
+    on_failure:
+      put: SAST-pr
+      params:
+        path: SAST-pr
+        status: failure
+
+- name: run-runtime-checks
+  plan:
+  - aggregate:
+    - get: runtime-checks-timer
+      trigger: true
+    - get: git-runtimechecks-repo
+      trigger: false
+    - get: security-image
+  - task: run-server-tests
+    inputs:
+    - name: git-runtimechecks-repo
+    image: security-image
+    file: git-runtimechecks-repo/ci/tasks/runtime-tests.yml
+    params:
+      HOSTNAME: {{dev-hostname}}
+  - task: run-application-tests
+    inputs:
+     - name: git-runtimechecks-repo
+    file: git-runtimechecks-repo/ci/tasks/runtime-checks.yml
+    image: security-image
+    params:
+      DATADOG_APIKEY: {{datadog-apikey}}
+      DATADOG_APPKEY: {{datadog-appkey}}
+      URLS: csaaMasterURLList.txt
+      APP: prod
+      SERVER: {{dev-hostname}}
+      ACCESS: csaaaccessControl.txt
+      UNENCRYPT: csaaunencryptControl.txt
