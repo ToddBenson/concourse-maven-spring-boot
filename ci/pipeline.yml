@@ -73,8 +73,8 @@ jobs:
   - task: run-deploy
     inputs:
     - name: git-repo
-    file: git-repo/ci/tasks/package.yml
     image: security-image
+    file: git-repo/ci/tasks/package.yml
 #  - put: deploy-s3
 #    params:
 #      file: release/*.war
