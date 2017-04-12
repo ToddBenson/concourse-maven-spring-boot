@@ -133,8 +133,9 @@ jobs:
   - task: run-security-tests
     inputs:
     - name: git-securitytests-repo
+    - name: git-repo
     image: security-image
-    file: git-securitytests-repo/ci/tasks/all-test.yml
+    file: git-repo/ci/tasks/all-test.yml
     params:
       HOSTNAME: {{dev-hostname}}
 
