@@ -64,6 +64,8 @@ resources:
   source:
     branch: master
     uri: https://gist.github.com/98f24ab71183713926aa350971f8bcc9.git
+    username: {{git-username}}
+    password: {{git-password}}
 
 jobs:
 - name: package-build
