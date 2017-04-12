@@ -1,6 +1,6 @@
 #!/bin/bash
 pwd
 env
-ls
-./mvnw clean install
-cp ./target/*.war ../release
+/bin/ls
+mvnw clean install
+/bin/cp ./target/*.war ../release
