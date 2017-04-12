@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 ls -l
 ./mvnw -f git-repo/pom.xml clean install
 cp ./target/*.war ../release

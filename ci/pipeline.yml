@@ -51,7 +51,7 @@ resources:
 - name: security-image
   type: docker-image
   source:
-    repository: csaa/security-gauntlt
+    repository: {{docker-image}}
     tag: latest
 
 - name: runtime-checks-timer
