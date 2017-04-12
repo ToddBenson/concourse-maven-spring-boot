@@ -5,7 +5,8 @@ inputs:
   - name: git-repo
 
 run:
-  path: git-repo/ci/bin/build.sh
+  dir:  git-repo
+  path: ./ci/bin/build.sh
 
 outputs:
   - name: release
