@@ -1,3 +1,4 @@
+---
 platform: linux
 
 inputs:
@@ -7,8 +8,8 @@ run:
   dir: git-repo
   path: ./ci/bin/build.sh
 
-outputs:
-  - name: release
-
-params:
-  MAVEN_BASEDIR: git-repo
+#outputs:
+#  - name: release
+#
+#params:
+#  MAVEN_BASEDIR: git-repo
