@@ -2,8 +2,6 @@
 ./mvnw clean install
 #/bin/cp ./target/*.war ../release
 
-#!/bin/sh
-
 set -e # fail fast
 set -x # print commands
 
