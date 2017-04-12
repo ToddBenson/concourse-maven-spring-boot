@@ -4,13 +4,7 @@ inputs:
   - name: git-repo
 
 run:
-  path: git-repo
-  args:
-  - -exc
-  - |
-  ls
-#  ./mvnw -f git-repo/pom.xml clean install
-#  cp ./target/*.war ../release
+  path: ci/bin/build.sh
 
 outputs:
   - name: release
