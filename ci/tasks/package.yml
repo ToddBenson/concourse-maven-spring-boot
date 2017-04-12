@@ -6,8 +6,7 @@ inputs:
   - name: deploy-file
 
 run:
-  dir:  git-repo
-  path: ./ci/bin/build.sh
+  path: git-repo/ci/bin/build.sh
 
 outputs:
   - name: release
