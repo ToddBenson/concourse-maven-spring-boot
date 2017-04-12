@@ -1,5 +1,5 @@
 #!/bin/bash
 pwd
-ls -l
-./mvnw -f clean install
+ls
+./mvnw clean install
 cp ./target/*.war ../release
