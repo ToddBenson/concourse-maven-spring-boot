@@ -110,13 +110,15 @@ jobs:
     - get: git-securitytests-repo
     - get: security-image
     - get: git-repo
-      passed: [package-deploy-dev]
+#      passed: [package-deploy-dev]
+      passed: [predeploy-SAST-test]
       trigger: true
   - task: run-security-tests
     inputs:
     - name: git-security-repo
+    - name: git-repo
     image: security-image
-    file: git-securitytests-repo/ci/tasks/acceptance-test.yml
+    file: git-repo/ci/tasks/acceptance-test.yml
     params:
       HOSTNAME: {{dev-hostname}}
 
