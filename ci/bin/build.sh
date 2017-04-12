@@ -12,7 +12,7 @@ cp ./target/*.war ../release
 cd ../release
 
 
-git config --global user.email "nobody@concourse.ci"
+git config --global user.email "todd.benson@csaa.com"
 git config --global user.name "Concourse"
 
 git add .
