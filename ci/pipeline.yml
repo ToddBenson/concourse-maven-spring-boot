@@ -73,9 +73,8 @@ jobs:
   - get: git-repo
     trigger: true
   - get: security-image
+  - get: deploy-file
   - task: run-deploy
-    inputs:
-    - name: git-repo
     image: security-image
     file: git-repo/ci/tasks/package.yml
   - put: deploy-file
