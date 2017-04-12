@@ -104,7 +104,6 @@ jobs:
     - get: git-repo
       passed: [predeploy-SAST-test]
       trigger: true
-    - get: security-image
   - put: deploy-cf-dev
     params:
       manifest: git-repo/ci/tasks/dev-manifest.yml
@@ -147,7 +146,6 @@ jobs:
   - get: git-repo
     passed: [security-acceptence-test]
     trigger: true
-  - get: security-image
   - put: deploy-cf-test
     params:
       manifest: git-repo/ci/tasks/test-manifest.yml
