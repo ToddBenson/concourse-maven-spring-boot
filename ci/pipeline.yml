@@ -215,7 +215,7 @@ jobs:
     - name: git-repo
     - name: git-securitytests-repo
     image: security-image
-    file: git-securitytests-repo/ci/tasks/runtime-checks.yml
+    file: git-repo/ci/tasks/runtime-checks.yml
     params:
       DATADOG_APIKEY: {{datadog-apikey}}
       DATADOG_APPKEY: {{datadog-appkey}}
