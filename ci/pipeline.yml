@@ -77,8 +77,8 @@ jobs:
     image: security-image
     file: git-repo/ci/tasks/package.yml
   - put: deploy-file
-    params: { repository: deploy-file }
-#      file: release/*.war
+    params: { repository: release }
+#    file: release/*.war
 
 - name: predeploy-SAST-test
   plan:
@@ -106,7 +106,7 @@ jobs:
       passed: [predeploy-SAST-test]
       trigger: true
     - get: deploy-file
-      passed: [predeply-SAST-test]
+#      passed: [predeploy-SAST-test]
   - put: deploy-cf-dev
     params:
       manifest: git-repo/ci/tasks/dev-manifest.yml
