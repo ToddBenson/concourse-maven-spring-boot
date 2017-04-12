@@ -38,11 +38,6 @@ resources:
     username: {{git-username}}
     password: {{git-password}}
 
-- name: git-runtimechecks-repo
-  type: git
-  source:
-    uri: {{git-runtime-checks}}
-
 - name: git-securitytests-repo
   type: git
   source:
@@ -199,21 +194,25 @@ jobs:
   - aggregate:
     - get: runtime-checks-timer
       trigger: true
-    - get: git-runtimechecks-repo
+    - get: git-securitytests-repo
+      trigger: false
+    - get: git-repo
       trigger: false
     - get: security-image
   - task: run-server-tests
     inputs:
-    - name: git-runtimechecks-repo
+    - name: git-repo
+    - name: git-securitytests-repo
     image: security-image
-    file: git-runtimechecks-repo/ci/tasks/runtime-tests.yml
+    file: git-repo/ci/tasks/runtime-tests.yml
     params:
       HOSTNAME: {{dev-hostname}}
   - task: run-application-tests
     inputs:
-     - name: git-runtimechecks-repo
-    file: git-runtimechecks-repo/ci/tasks/runtime-checks.yml
+    - name: git-repo
+    - name: git-securitytests-repo
     image: security-image
+    file: git-securitytests-repo/ci/tasks/runtime-checks.yml
     params:
       DATADOG_APIKEY: {{datadog-apikey}}
       DATADOG_APPKEY: {{datadog-appkey}}

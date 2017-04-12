@@ -2,8 +2,9 @@
 platform: linux
 inputs:
   - { name: git-securitytests-repo }
+  - { name: git-repo }
 run:
-  dir: git-securitytests-repo
+  dir: git-repo
   path: bash
   args:
   - -exc
