@@ -132,7 +132,7 @@ jobs:
       trigger: true
   - task: run-security-tests
     inputs:
-    - name: git-securitytests-repo
+    - name: git-security-repo
     - name: git-repo
     image: security-image
     file: git-repo/ci/tasks/all-test.yml
