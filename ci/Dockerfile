@@ -30,7 +30,7 @@ RUN git clone https://github.com/drwetter/testssl.sh.git /opt/testssl
 RUN /bin/bash -c "cd /opt/gauntlt; source ./install_gauntlt_deps.sh"; exit 0
 RUN bash /opt/gauntlt/ready_to_rumble.sh
 
-RUN export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
 RUN cd /opt/base-project;./mvnw clean install
 ADD "https://sonarsource.bintray.com/Distribution/sonar-scanner-cli/sonar-scanner-${SONAR_SCANNER_VERSION}.zip" /
 RUN unzip "sonar-scanner-${SONAR_SCANNER_VERSION}.zip"
