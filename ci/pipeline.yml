@@ -60,12 +60,13 @@ resources:
 #    interval: 24h
 
 - name: deploy-file
-  type: git
+  type: s3
   source:
-    branch: master
-    uri: https://gist.github.com/98f24ab71183713926aa350971f8bcc9.git
-    username: {{git-username}}
-    password: {{git-password}}
+    region_name: us-west-1
+    bucket: cfhello
+    regexp: test-(.*).war
+    access_key_id: {{s3-access-key-id}}
+    secret_access_key: {{s3-secret-access-key}}
 
 jobs:
 - name: package-build
@@ -78,8 +79,8 @@ jobs:
     image: security-image
     file: git-repo/ci/tasks/package.yml
   - put: deploy-file
-    params: { repository: release }
-#    file: release/*.war
+    params:
+      file: release/*.war
 
 - name: predeploy-SAST-test
   plan:
@@ -107,12 +108,11 @@ jobs:
       passed: [predeploy-SAST-test]
       trigger: true
     - get: deploy-file
-#      passed: [predeploy-SAST-test]
+      passed: [package-build]
   - put: deploy-cf-dev
     params:
       manifest: git-repo/ci/tasks/dev-manifest.yml
-
-#      path: release/*.war
+      path: release/*.war
 
 - name: security-acceptence-test
   plan:
@@ -120,8 +120,8 @@ jobs:
     - get: git-securitytests-repo
     - get: security-image
     - get: git-repo
-#      passed: [package-deploy-dev]
-      passed: [predeploy-SAST-test]
+      passed: [package-deploy-dev]
+#      passed: [predeploy-SAST-test]
       trigger: true
   - task: run-security-tests
     inputs:
