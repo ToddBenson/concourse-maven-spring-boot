@@ -5,4 +5,4 @@ inputs:
     - { name: git-repo}
 run:
     dir: git-repo
-    path: ./bin/predeploy-sast.sh
+    path: ./ci/bin/predeploy-sast.sh

@@ -1,8 +1,0 @@
----
-platform: linux
-
-inputs:
-    - { name: SAST-pr }
-run:
-    dir: SAST-pr
-    path: pr-sast.sh
