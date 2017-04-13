@@ -13,7 +13,7 @@ resources:
     password: {{cf-da-password}}
     organization: todd.benson
     space: development
-    skip_cert_check: tru
+    skip_cert_check: true
 
 - name: deploy-cf-test
   type: cf
