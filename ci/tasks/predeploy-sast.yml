@@ -1,8 +1,0 @@
----
-platform: linux
-
-inputs:
-    - { name: git-repo}
-run:
-    dir: git-repo
-    path: ./ci/bin/predeploy-sast.sh

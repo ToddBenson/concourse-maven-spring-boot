@@ -1,6 +1,6 @@
 #! /bin/bash
 export SSLYZE_PATH=/usr/bin/sslyze
-cd ../git-securitytests-repo/src/
+cd ../securitytests/src/
 /opt/gauntlt/bin/gauntlt -f progress
       if [ $? -eq 0 ]
       then

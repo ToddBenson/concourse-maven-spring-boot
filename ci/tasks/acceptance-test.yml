@@ -1,8 +1,8 @@
 ---
 platform: linux
 inputs:
-  - { name: git-securitytests-repo }
-  - { name: git-repo }
+  - { name: securitytests }
+  - { name: source-code }
 run:
-  dir: git-repo
+  dir: source-code
   path: ci/bin/security-acceptance-test.sh
