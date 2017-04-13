@@ -5,13 +5,23 @@ resource_types:
     repository: jtarchie/pr
 
 resources:
-- name: deploy
+- name: deploy-dev
   type: cf
   source:
     api: api.run.pivotal.io
     username: todd.benson@csaa.com
     password: {{cf-da-password}}
     organization: todd.benson
+    space: development
+    skip_cert_check: true
+- name: deploy-test
+  type: cf
+  source:
+    api: api.run.pivotal.io
+    username: todd.benson@csaa.com
+    password: {{cf-da-password}}
+    organization: todd.benson
+    space: test
     skip_cert_check: true
 
 - name: pull-request
@@ -82,14 +92,14 @@ jobs:
 
 - name: deploy-to-dev
   plan:
+  - get: source-code
   - get: release
     passed: [build-package]
     trigger: true
-  - put: deploy
+  - put: deploy-dev
     params:
       manifest: source-code/ci/tasks/manifest.yml
       path: release/*.war
-      space: development
 
 - name: security-acceptence-test
   plan:
@@ -132,11 +142,10 @@ jobs:
   - get: release
     passed: [security-acceptence-test]
     trigger: true
-  - put: deploy
+  - put: deploy-test
     params:
       manifest: source-code/ci/tasks/manifest.yml
       path: release/*.war
-      space: test
 
 - name: code-review
   plan:

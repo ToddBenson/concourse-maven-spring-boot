@@ -2,7 +2,7 @@
 Xvfb :99 -ac &
 export DISPLAY=:99
 export GRADLE_OPTS=-Dorg.gradle.native=false
-cd ../securitytests
+cd ../security-tests
 ./gradlew test -Dcucumber.options="--tags ~@acceptance"|grep FAILED
 if [ $? -eq 0 ]
 then
