@@ -112,7 +112,7 @@ jobs:
   - put: deploy-cf-dev
     params:
       manifest: git-repo/ci/tasks/dev-manifest.yml
-      path: release/*.war
+      path: deploy-file/*.war
 
 - name: security-acceptence-test
   plan:

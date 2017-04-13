@@ -3,5 +3,5 @@ applications:
 - name: tgbenson-helloWorld
   memory: 512MB
   instances: 1
-  path: ../../target/*.war
+  path: deploy-file/*.war
   buildpack: https://github.com/cloudfoundry/java-buildpack.git
