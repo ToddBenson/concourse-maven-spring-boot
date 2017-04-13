@@ -106,9 +106,9 @@ jobs:
   - aggregate:
     - get: git-repo
       passed: [predeploy-SAST-test]
-      trigger: true
     - get: deploy-file
       passed: [package-build]
+      trigger: true
   - put: deploy-cf-dev
     params:
       manifest: git-repo/ci/tasks/dev-manifest.yml
@@ -154,10 +154,12 @@ jobs:
   - get: git-repo
     passed: [security-acceptence-test]
     trigger: true
+  - get: deploy-file
+    trigger: true
   - put: deploy-cf-test
     params:
       manifest: git-repo/ci/tasks/test-manifest.yml
-      path: release/*.war
+      path: deploy-file/*.war
 
 - name: pr-SAST-test
   plan:
