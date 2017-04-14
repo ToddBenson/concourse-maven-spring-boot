@@ -5,7 +5,7 @@ pipeline.
 
 This pipeline uses:
 * _GitHub_ as the source code repository
-* _SonarQube_ as the code quality analyzer - with Dependency-Check, GitHub, and Fidbugs pluging
+* _SonarQube_ as the code quality analyzer - with Dependency-Check, GitHub, and Findbugs plugins enabled
 * _Concourse_ as the delivery pipeline
 * _Maven_ as the build tool
 * _Spring Boot_ for the web framework
@@ -42,18 +42,18 @@ Hourly:
 * Runtime checks, which include SSL tests, nmap scans, HTTP method detection, etc.
 
 
-Nightly (ToDo)
+Nightly (TODO)
 
 * A full ZAP dynamic scan
 * Get project metrics from SonarQube, GitHub, etc. for monitoring and dashboarding
 
 
-During Random Business Hours (ToDo)
+During Random Business Hours (TODO)
 
 * Attack simulations
 
 
-TBD (ToDo)
+TBD (TODO)
 
 * Automated auditing of services - AWS, GitHub, etc.
 
