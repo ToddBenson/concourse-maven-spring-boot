@@ -22,6 +22,8 @@ Additionally, the repository for the tests is at _https://github.com/ToddBenson/
 
 The main project flow:
 ![alt text](https://github.com/ToddBenson/concourse-maven-spring-boot/blob/master/screenshot.png "Example Pipeline")
+
+Every push to Master:
 ```
 * Clones a repository from GitHub on any push to Master
 * Scans JavaScript using Retire.JS and custom eslint rules from mozilla
@@ -100,16 +102,6 @@ s3-access-key-id: <AWS S3 Access Key ID>
 github-private-key: <Github private key>
 ```
 
-### Setting up the Command Line Tool
-
-- Navigate to <http://192.168.100.4:8080>
-- Download the CLI
-
-```bash
-$ cp ~/Downloads/fly /usr/local/bin
-$ chmod u+x /usr/local/bin/fly
-$ fly -t lite login -c http://192.168.100.4:8080
-```
 
 ### Adding the Project to Concourse
 
