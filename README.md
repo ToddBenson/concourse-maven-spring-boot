@@ -23,8 +23,8 @@ The main project flow:
 ![alt text](https://github.com/ToddBenson/concourse-maven-spring-boot/blob/master/screenshot.png "Example Pipeline")
 
 Every push to Master:
-```
-* Clones a repository from GitHub on any push to Master
+
+* Clones a repository from GitHub
 * Scans JavaScript using Retire.JS and custom eslint rules from mozilla
 * Builds the release .war file, using Maven with a OWASP Dependency-check plugin
 * Sends data to SonarQube for analysis
@@ -34,36 +34,35 @@ Every push to Master:
 * Runs security acceptance tests (Test marked with @acceptance)
 * Once acceptance tests have passed, the release is pushed to the test instance of Cloud Foundry
 * Also after acceptance test, all other security tests run (experimental, unfinished stories, etc.)
-```
+
 
 
 Hourly:
-```
+
 * Runtime checks, which include SSL tests, nmap scans, HTTP method detection, etc.
-```
+
 
 Nightly (ToDo)
-```
+
 * A full ZAP dynamic scan
 * Get project metrics from SonarQube, GitHub, etc. for monitoring and dashboarding
-```
+
 
 During Random Business Hours (ToDo)
 
-```
 * Attack simulations
-```
+
 
 TBD (ToDo)
-```
+
 * Automated auditing of services - AWS, GitHub, etc.
-```
+
 
 For Each Pull Requests
 
-```
+
 * Run a SonarQube scan and update the PR Comments
-```
+
 
 ## Setup
 
