@@ -4,7 +4,6 @@ This is a small "Hello, World" application to be used as a proof-of-concept for 
 pipeline. 
 
 This pipeline uses:
-```
 * _GitHub_ as the source code repository
 * _SonarQube_ as the code quality analyzer
 * _Concourse_ as the delivery pipeline
@@ -12,7 +11,7 @@ This pipeline uses:
 * _Spring Boot_ for the web framework
 * _Amazon S3_ for cloud storage of the release build
 * _Cloud Foundry_ for the web hosting service
-```
+
 
  
 
