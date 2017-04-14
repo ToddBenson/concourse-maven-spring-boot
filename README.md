@@ -18,6 +18,9 @@ Additionally, the repository for the tests is at _https://github.com/ToddBenson/
 
 
 The main project flow:
+
+![alt text](https://github.com/ToddBenson/concourse-maven-spring-boot/screenshot.png "Example Pipeline")
+
 * Clones a repository from GitHub on any push to Master
 * Scans JavaScript using Retire.JS and custom eslint rules from mozilla
 * Builds the release .war file, using Maven with a OWASP Dependency-check plugin
