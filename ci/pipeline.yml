@@ -48,15 +48,20 @@ resources:
     repository: {{docker-image}}
     tag: latest
 
-- name: runtime-checks-timer
+- name: hourly
   type: time
   source:
     interval: 60m
 
-#- name: full-dynamic-scan-timer
-#  type: time
-#  source:
-#    interval: 24h
+- name: nightly
+  type: time
+  source:
+    interval: 24h
+
+- name: random-business-hours
+  type: time
+  source:
+    interval: 24h
 
 - name: release
   type: s3
@@ -139,6 +144,7 @@ jobs:
 
 - name: deploy-to-test
   plan:
+  - get: source-code
   - get: release
     passed: [security-acceptence-test]
     trigger: true
@@ -191,7 +197,7 @@ jobs:
 - name: runtime-checks
   plan:
   - aggregate:
-    - get: runtime-checks-timer
+    - get: hourly
       trigger: true
     - get: security-tests
     - get: source-code
@@ -218,3 +224,49 @@ jobs:
       SERVER: {{dev-hostname}}
       ACCESS: csaaaccessControl.txt
       UNENCRYPT: csaaunencryptControl.txt
+
+- name: full-dynamic-scan
+  plan:
+  - aggregate:
+    - get: nightly
+      trigger: true
+    - get: security-tests
+    - get: source-code
+    - get: security-image
+  - task: dynamic-scans
+    inputs:
+    - name: source-code
+    - name: security-tests
+    image: security-image
+    file: source-code/ci/tasks/runtime-checks.yml
+    params:
+      HOSTNAME: {{dev-hostname}}
+
+- name: fetch-metrics
+  plan:
+  - get: source-code
+    passed: [full-dynamic-scan]
+  - task: dynamic-scans
+    inputs:
+    - name: source-code
+    file: source-code/ci/tasks/runtime-checks.yml
+    params:
+      HOSTNAME: {{dev-hostname}}
+
+
+- name: simulated-attacks
+  plan:
+  - aggregate:
+    - get: random-business-hours
+      trigger: true
+    - get: security-tests
+    - get: source-code
+    - get: security-image
+  - task: server-tests
+    inputs:
+    - name: source-code
+    - name: security-tests
+    image: security-image
+    file: source-code/ci/tasks/runtime-checks.yml
+    params:
+      HOSTNAME: {{dev-hostname}}
