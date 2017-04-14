@@ -5,7 +5,7 @@ pipeline.
 
 This pipeline uses:
 * _GitHub_ as the source code repository
-* _SonarQube_ as the code quality analyzer
+* _SonarQube_ as the code quality analyzer - with Dependency-Check, GitHub, and Fidbugs pluging
 * _Concourse_ as the delivery pipeline
 * _Maven_ as the build tool
 * _Spring Boot_ for the web framework
@@ -15,8 +15,8 @@ This pipeline uses:
 
  
 
-Additionally, the repository for the tests is at _https://github.com/ToddBenson/cftest-security.git and the Docker image used 
- is at _https://hub.docker.com/r/tgbenson/security-image/. The Dockerfile is located in the project.
+Additionally, the repository for the tests is at https://github.com/ToddBenson/cftest-security.git and the Docker image used 
+ is at https://hub.docker.com/r/tgbenson/security-image/. The Dockerfile is located in the project.
 
 
 The main project flow:
