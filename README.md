@@ -4,6 +4,7 @@ This is a small "Hello, World" application to be used as a proof-of-concept for 
 pipeline. 
 
 This pipeline uses:
+```
 * _GitHub_ as the source code repository
 * _SonarQube_ as the code quality analyzer
 * _Concourse_ as the delivery pipeline
@@ -11,6 +12,8 @@ This pipeline uses:
 * _Spring Boot_ for the web framework
 * _Amazon S3_ for cloud storage of the release build
 * _Cloud Foundry_ for the web hosting service
+```
+
  
 
 Additionally, the repository for the tests is at _https://github.com/ToddBenson/cftest-security.git and the Docker image used 
@@ -18,9 +21,8 @@ Additionally, the repository for the tests is at _https://github.com/ToddBenson/
 
 
 The main project flow:
-
-![alt text](https://github.com/ToddBenson/concourse-maven-spring-boot/screenshot.png "Example Pipeline")
-
+![alt text](https://github.com/ToddBenson/concourse-maven-spring-boot/blob/master/  screenshot.png "Example Pipeline")
+```
 * Clones a repository from GitHub on any push to Master
 * Scans JavaScript using Retire.JS and custom eslint rules from mozilla
 * Builds the release .war file, using Maven with a OWASP Dependency-check plugin
@@ -31,28 +33,36 @@ The main project flow:
 * Runs security acceptance tests (Test marked with @acceptance)
 * Once acceptance tests have passed, the release is pushed to the test instance of Cloud Foundry
 * Also after acceptance test, all other security tests run (experimental, unfinished stories, etc.)
+```
 
 
 Hourly:
+```
 * Runtime checks, which include SSL tests, nmap scans, HTTP method detection, etc.
-
+```
 
 Nightly (ToDo)
+```
 * A full ZAP dynamic scan
 * Get project metrics from SonarQube, GitHub, etc. for monitoring and dashboarding
-
+```
 
 During Random Business Hours (ToDo)
-* Attack simulations
 
+```
+* Attack simulations
+```
 
 TBD (ToDo)
+```
 * Automated auditing of services - AWS, GitHub, etc.
-
+```
 
 For Each Pull Requests
-* Run a SonarQube scan and update the PR Comments
 
+```
+* Run a SonarQube scan and update the PR Comments
+```
 
 ## Setup
 
