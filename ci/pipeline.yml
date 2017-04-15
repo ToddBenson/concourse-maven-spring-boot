@@ -253,6 +253,18 @@ jobs:
     params:
       HOSTNAME: {{dev-hostname}}
 
+- name: automated-audits
+  plan:
+  - get: nightly
+    trigger: true
+  - get: source-code
+  - task: audits
+    inputs:
+    - name: source-code
+    file: source-code/ci/tasks/runtime-checks.yml
+    params:
+      HOSTNAME: {{dev-hostname}}
+
 
 - name: simulated-attacks
   plan:
