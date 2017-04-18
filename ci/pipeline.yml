@@ -194,7 +194,7 @@ jobs:
         path: pull-request
         status: failure
 
-- name: runtime-checks
+- name: server-runtime-checks
   plan:
   - aggregate:
     - get: hourly
@@ -210,20 +210,26 @@ jobs:
     file: source-code/ci/tasks/runtime-tests.yml
     params:
       HOSTNAME: {{dev-hostname}}
-  - task: application-tests
+
+- name: application-runtime-checks
+  plan:
+  - aggregate:
+    - get: hourly
+      passed: [server-runtime-checks]
+      trigger: true
+    - get: security-tests
+    - get: source-code
+      passed: [server-runtime-checks]
+    - get: security-image
+  - task: server-tests
     inputs:
     - name: source-code
     - name: security-tests
     image: security-image
-    file: source-code/ci/tasks/runtime-checks.yml
+    file: source-code/ci/tasks/runtime-tests.yml
     params:
-      DATADOG_APIKEY: {{datadog-apikey}}
-      DATADOG_APPKEY: {{datadog-appkey}}
-      URLS: csaaMasterURLList.txt
-      APP: prod
-      SERVER: {{dev-hostname}}
-      ACCESS: csaaaccessControl.txt
-      UNENCRYPT: csaaunencryptControl.txt
+      HOSTNAME: {{dev-hostname}}
+
 
 - name: full-dynamic-scan
   plan:
@@ -255,9 +261,12 @@ jobs:
 
 - name: automated-audits
   plan:
-  - get: nightly
+  - get: hourly
+    trigger: true
+    passed: [application-runtime-checks]
     trigger: true
   - get: source-code
+    passed: [application-runtime-checks]
   - task: audits
     inputs:
     - name: source-code
