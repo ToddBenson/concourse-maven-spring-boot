@@ -12,7 +12,7 @@ public class HelloWorldHttpController {
     public String greeting(@RequestParam(value="name", required=false, defaultValue="World") String name, Model model) {
         model.addAttribute("name", name);
         String newToken = new Application().generateSecretToken();
-        return "greeting" + newToken;
-//        return "greeting";
+//        return "greeting" + newToken;
+        return "greeting";
     }
 }
