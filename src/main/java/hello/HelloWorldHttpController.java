@@ -13,6 +13,7 @@ public class HelloWorldHttpController {
         model.addAttribute("name", name);
         String token = new Application().generateSecretToken();
         System.out.print(token);
+        System.out.print("Test");
         return "greeting" + token;
     }
 }
