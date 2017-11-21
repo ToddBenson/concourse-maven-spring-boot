@@ -1,0 +1,8 @@
+---
+platform: linux
+inputs:
+  - { name: security-tests }
+  - { name: source-code }
+run:
+  dir: source-code
+  path: ci/bin/security-acceptance-test.sh

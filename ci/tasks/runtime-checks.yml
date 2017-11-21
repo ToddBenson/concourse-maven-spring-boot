@@ -1,0 +1,12 @@
+---
+platform: linux
+inputs:
+  - { name: security-tests }
+  - { name: source-code }
+run:
+  dir: source-code
+  path: bash
+  args:
+  - -exc
+  - |
+    ci/bin/runtime-checks.sh

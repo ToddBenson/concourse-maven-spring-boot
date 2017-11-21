@@ -11,8 +11,7 @@ public class Application {
 		SpringApplication.run(Application.class, args);
 	}
 
-
-	String generateSecretToken() {
+	String generateSecretToken(){
 		Random r = new Random();
 		return Long.toHexString(r.nextLong());
 	}

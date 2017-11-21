@@ -1,0 +1,293 @@
+resource_types:
+- name: pull-request
+  type: docker-image
+  source:
+    repository: jtarchie/pr
+
+resources:
+- name: deploy-dev
+  type: cf
+  source:
+    api: api.run.pivotal.io
+    username: todd.benson@csaa.com
+    password: {{cf-da-password}}
+    organization: todd.benson
+    space: development
+    skip_cert_check: true
+- name: deploy-test
+  type: cf
+  source:
+    api: api.run.pivotal.io
+    username: todd.benson@csaa.com
+    password: {{cf-da-password}}
+    organization: todd.benson
+    space: test
+    skip_cert_check: true
+
+- name: pull-request
+  type: pull-request
+  source:
+    repo: {{repo}}
+    access_token: {{git-repo-token}}
+
+- name: source-code
+  type: git
+  source:
+    uri: {{git-repo}}
+    username: {{git-username}}
+    password: {{git-password}}
+
+- name: security-tests
+  type: git
+  source:
+    uri: {{git-security-tests}}
+
+- name: security-image
+  type: docker-image
+  source:
+    repository: {{docker-image}}
+    tag: latest
+
+- name: hourly
+  type: time
+  source:
+    interval: 60m
+
+- name: nightly
+  type: time
+  source:
+    interval: 24h
+
+- name: random-business-hours
+  type: time
+  source:
+    interval: 24h
+
+- name: release
+  type: s3
+  source:
+    region_name: us-west-1
+    bucket: cfhello
+    regexp: test-(.*).war
+    access_key_id: {{s3-access-key-id}}
+    secret_access_key: {{s3-secret-access-key}}
+
+jobs:
+- name: build-package
+  plan:
+  - get: source-code
+    trigger: true
+  - get: security-image
+  - get: release
+  - task: build-package
+    file: source-code/ci/tasks/package.yml
+    image: security-image
+    params:
+      GIT_REPO_TOKEN: {{git-repo-token}}
+      SONAR_TOKEN: {{sonar-token}}
+      SONAR_JAVA_BINARIES: {{sonar-java-binaries}}
+      SONAR_SOURCES: {{sonar-sources}}
+      SONAR_PROJECT_VERSION: {{sonar-project-version}}
+      SONAR_PROJECT_NAME: {{sonar-project-name}}
+      SONAR_PROJECT_KEY: {{sonar-project-key}}
+      SONAR_URL: {{sonar-url}}
+  - put: release
+    params:
+      file: release/*.war
+
+- name: deploy-to-dev
+  plan:
+  - get: source-code
+  - get: release
+    passed: [build-package]
+    trigger: true
+  - put: deploy-dev
+    params:
+      manifest: source-code/ci/tasks/manifest.yml
+      path: release/*.war
+
+- name: security-acceptence-test
+  plan:
+  - aggregate:
+    - get: security-tests
+    - get: security-image
+    - get: release
+      passed: [deploy-to-dev]
+      trigger: true
+    - get: source-code
+  - task: run-security-tests
+    inputs:
+    - name: security-tests
+    - name: source-code
+    image: security-image
+    file: source-code/ci/tasks/acceptance-test.yml
+    params:
+      HOSTNAME: {{dev-hostname}}
+
+- name: security-all-test
+  plan:
+  - aggregate:
+    - get: security-tests
+    - get: security-image
+    - get: source-code
+      passed: [security-acceptence-test]
+      trigger: true
+
+  - task: run-security-tests
+    inputs:
+    - name: security-tests
+    - name: source-code
+    image: security-image
+    file: source-code/ci/tasks/all-test.yml
+    params:
+      HOSTNAME: {{dev-hostname}}
+
+- name: deploy-to-test
+  plan:
+  - get: source-code
+  - get: release
+    passed: [security-acceptence-test]
+    trigger: true
+  - put: deploy-test
+    params:
+      manifest: source-code/ci/tasks/manifest.yml
+      path: release/*.war
+
+- name: code-review
+  plan:
+  - get: pull-request
+    trigger: true
+  - put: pull-request
+    params:
+      path: pull-request
+      status: pending
+  - task: code-review
+    config:
+      image_resource:
+        type: docker-image
+        source:
+          repository: {{docker-image}}
+      inputs:
+      - name: pull-request
+      platform: linux
+      run:
+        path: sh
+        args: ['-c', 'cd pull-request;retire --path . --outputformat text --outputpath retire.txt;eslint -c /opt/compliance-toolkit/configs/static/.eslintrc --debug . -o ./eslint.txt;./mvnw clean install findbugs:findbugs;cat *.txt;sonar-scanner -Dsonar.host.url=$SONAR_URL -Dsonar.projectKey=$SONAR_PROJECT_KEY -Dsonar.projectName=$SONAR_PROJECT_NAME -Dsonar.projectVersion=$SONAR_PROJECT_VERSION -Dsonar.sources=$SONAR_SOURCES -Dsonar.java.binaries=$SONAR_JAVA_BINARIES -Dsonar.analysis.mode=preview -Dsonar.github.pullRequest=$(git config --get pullrequest.id) -Dsonar.github.repository=$REPO -Dsonar.github.oauth=$GIT_REPO_TOKEN -Dsonar.login=$SONAR_TOKEN']
+    params:
+      GIT_REPO_TOKEN: {{git-repo-token}}
+      SONAR_TOKEN: {{sonar-token}}
+      SONAR_JAVA_BINARIES: {{sonar-java-binaries}}
+      SONAR_SOURCES: {{sonar-sources}}
+      SONAR_PROJECT_VERSION: {{sonar-project-version}}
+      SONAR_PROJECT_NAME: {{sonar-project-name}}
+      SONAR_PROJECT_KEY: {{sonar-project-key}}
+      SONAR_URL: {{sonar-url}}
+      REPO: {{repo}}
+    on_success:
+      put: pull-request
+      params:
+        path: pull-request
+        status: success
+    on_failure:
+      put: pull-request
+      params:
+        path: pull-request
+        status: failure
+
+- name: server-runtime-checks
+  plan:
+  - aggregate:
+    - get: hourly
+      trigger: true
+    - get: security-tests
+    - get: source-code
+    - get: security-image
+  - task: server-tests
+    inputs:
+    - name: source-code
+    - name: security-tests
+    image: security-image
+    file: source-code/ci/tasks/runtime-tests.yml
+    params:
+      HOSTNAME: {{dev-hostname}}
+
+- name: application-runtime-checks
+  plan:
+  - aggregate:
+    - get: hourly
+      passed: [server-runtime-checks]
+      trigger: true
+    - get: security-tests
+    - get: source-code
+      passed: [server-runtime-checks]
+    - get: security-image
+  - task: server-tests
+    inputs:
+    - name: source-code
+    - name: security-tests
+    image: security-image
+    file: source-code/ci/tasks/runtime-tests.yml
+    params:
+      HOSTNAME: {{dev-hostname}}
+
+
+- name: full-dynamic-scan
+  plan:
+  - aggregate:
+    - get: nightly
+      trigger: true
+    - get: security-tests
+    - get: source-code
+    - get: security-image
+  - task: dynamic-scans
+    inputs:
+    - name: source-code
+    - name: security-tests
+    image: security-image
+    file: source-code/ci/tasks/runtime-checks.yml
+    params:
+      HOSTNAME: {{dev-hostname}}
+
+- name: fetch-metrics
+  plan:
+  - get: source-code
+    passed: [full-dynamic-scan]
+  - task: dynamic-scans
+    inputs:
+    - name: source-code
+    file: source-code/ci/tasks/runtime-checks.yml
+    params:
+      HOSTNAME: {{dev-hostname}}
+
+- name: automated-audits
+  plan:
+  - get: hourly
+    trigger: true
+    passed: [application-runtime-checks]
+    trigger: true
+  - get: source-code
+    passed: [application-runtime-checks]
+  - task: audits
+    inputs:
+    - name: source-code
+    file: source-code/ci/tasks/runtime-checks.yml
+    params:
+      HOSTNAME: {{dev-hostname}}
+
+
+- name: simulated-attacks
+  plan:
+  - aggregate:
+    - get: random-business-hours
+      trigger: true
+    - get: security-tests
+    - get: source-code
+    - get: security-image
+  - task: server-tests
+    inputs:
+    - name: source-code
+    - name: security-tests
+    image: security-image
+    file: source-code/ci/tasks/runtime-checks.yml
+    params:
+      HOSTNAME: {{dev-hostname}}

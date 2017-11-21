@@ -1,9 +1,9 @@
 package hello;
 
 import org.junit.Test;
-import util.java.Random;
+//import util.java.Random;
 
-import static org.junit.Assert.*;
+//import static org.junit.Assert.*;
 
 /**
  * Created by gl42ben on 2/1/17.
@@ -11,8 +11,8 @@ import static org.junit.Assert.*;
 public class ApplicationTest {
     @Test
     public void main() throws Exception {
--		Random r = new Random();
--		return Long.toHexString(r.nextLong());
+//-		Random r = new Random();
+//-		return Long.toHexString(r.nextLong());
     }
 
 }
